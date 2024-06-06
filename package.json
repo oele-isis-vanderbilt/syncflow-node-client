@@ -1,9 +1,9 @@
 {
   "name": "syncflow-node-client",
   "private": false,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
-  "main": "dist/syncflow-node-client.cjs.js", 
+  "main": "dist/syncflow-node-client.cjs.js",
   "module": "dist/syncflow-node-client.es.js",
   "types": "dist/index.d.ts",
   "exports": {
