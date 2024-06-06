@@ -7,7 +7,7 @@
 </p>
 <p align="center">
 <a href="https://github.com/oele-isis-vanderbilt/syncflow-node-client/actions/workflows/test.yaml" target="_blank">
-    <img src="https://github.com/oele-isis-vanderbilt/syncflow-node-client/actions/workflows/test.yaml/badge.svg)" alt="Test">
+    <img src="https://github.com/oele-isis-vanderbilt/syncflow-node-client/actions/workflows/test.yaml/badge.svg" alt="Test">
 </a>
 </p>
 This is a reusable NodeJS client implementation for SyncFlow. The idea here is to create necessary functionality to interact with the `SyncFlow` api, in a NodeJS application. Primary beneficiaries of this package could be clients to SyncFlow, who have their own backend in NodeJS and want to integrate with `SyncFlow`.
