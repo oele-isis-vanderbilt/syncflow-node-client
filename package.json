@@ -7,7 +7,13 @@
     "build": "vite build",
     "prettier": "prettier --write --ignore-unknown .",
     "test": "vitest",
-    "doc": "tsdoc  --src=src/syncflow-client.ts --dest=doc.md"
+    "doc": "tsdoc  --src=src/syncflow-client.ts --dest=doc.md",
+    "bump:patch": "npm version patch && git push --follow-tags",
+    "bump:minor": "npm version minor && git push --follow-tags",
+    "bump:major": "npm version major && git push --follow-tags",
+    "bump:major:dry": "npm version major --no-git-tag-version",
+    "bump:minor:dry": "npm version minor --no-git-tag-version",
+    "bump:patch:dry": "npm version patch --no-git-tag-version"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
