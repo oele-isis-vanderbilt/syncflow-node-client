@@ -14,6 +14,135 @@ Parameters:
 * `clientOpts`: - Optional client options.
 
 
+### Methods
+
+- [createRoom](#gear-createroom)
+- [listRooms](#gear-listrooms)
+- [deleteRoom](#gear-deleteroom)
+- [getLivekitServerHealth](#gear-getlivekitserverhealth)
+- [listEgresses](#gear-listegresses)
+- [listParticipants](#gear-listparticipants)
+- [startTrackRecording](#gear-starttrackrecording)
+- [stopRecording](#gear-stoprecording)
+- [generateLivekitToken](#gear-generatelivekittoken)
+
+#### :gear: createRoom
+
+Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `createRoom` | `(name: string, roomOptions: Partial<CreateRoomOptions>) => Promise<Result<LivekitRoom, HttpError>>` |
+
+Parameters:
+
+* `name`: - The name of the room.
+* `roomOptions`: - Optional room options.
+
+
+#### :gear: listRooms
+
+Lists all the active rooms created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `listRooms` | `() => Promise<Result<LivekitRoom[], HttpError>>` |
+
+#### :gear: deleteRoom
+
+Deletes the room with the provided name from the SyncFlow connected LiveKit server.
+The room must have been created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `deleteRoom` | `(roomName: string) => Promise<Result<LivekitRoom, HttpError>>` |
+
+Parameters:
+
+* `roomName`: - The name of the room to delete.
+
+
+#### :gear: getLivekitServerHealth
+
+Gets the health status of the LiveKit server connected to the SyncFlow server.
+
+| Method | Type |
+| ---------- | ---------- |
+| `getLivekitServerHealth` | `() => Promise<Result<GenericResponse, HttpError>>` |
+
+#### :gear: listEgresses
+
+Lists all the active egresses from the room with the provided name.
+The room must have been created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `listEgresses` | `(roomName: string) => Promise<Result<EgressInfo[], HttpError>>` |
+
+Parameters:
+
+* `roomName`: - The name of the room.
+
+
+#### :gear: listParticipants
+
+Lists all the participants in the room with the provided name.
+The room must have been created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `listParticipants` | `(roomName: string) => Promise<Result<ParticipantInfo[], HttpError>>` |
+
+Parameters:
+
+* `roomName`: - The name of the room.
+
+
+#### :gear: startTrackRecording
+
+Starts recording the track with the provided track SID in the room with the provided name.
+The room must have been created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `startTrackRecording` | `(roomName: string, trackSid: string) => Promise<Result<EgressInfo, HttpError>>` |
+
+Parameters:
+
+* `roomName`: - The name of the room.
+* `trackSid`: - The SID of the track to record.
+
+
+#### :gear: stopRecording
+
+Stops recording the track with the provided track SID in the room with the provided name.
+The room must have been created by the user with the provided API key/secret pairs.
+
+| Method | Type |
+| ---------- | ---------- |
+| `stopRecording` | `(egressId: string) => Promise<Result<EgressInfo, HttpError>>` |
+
+Parameters:
+
+* `roomName`: - The name of the room.
+* `trackSid`: - The SID of the track to stop recording.
+
+
+#### :gear: generateLivekitToken
+
+Generates a LiveKit token for the user with the provided identity and video grants.
+
+| Method | Type |
+| ---------- | ---------- |
+| `generateLivekitToken` | `(identity: string, grants: Partial<VideoGrants>) => Promise<Result<TokenResponse, HttpError or SyncFlowClientError>>` |
+
+Parameters:
+
+* `identity`: - The identity of the user.
+* `grants`: - The video grants for the user.
+
+
+
 ## :factory: SyncFlowClientBuilder
 
 SyncFlowClientBuilder class is used to build a SyncFlowClient instance.

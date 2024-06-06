@@ -52,7 +52,7 @@ export class SyncFlowClient {
      * @param {Partial<CreateRoomOptions>} roomOptions - Optional room options.
      * @returns {Promise<Result<LivekitRoom, HttpError>>} - The result of the room creation operation.
      */
-    async createRoom(
+    public async createRoom(
         name: string,
         roomOptions: Partial<CreateRoomOptions>
     ): Promise<Result<LivekitRoom, HttpError>> {
@@ -75,7 +75,7 @@ export class SyncFlowClient {
      * @returns {Promise<Result<LivekitRoom[], HttpError>>} - The result of the list rooms operation.
      */
 
-    async listRooms(): Promise<Result<LivekitRoom[], HttpError>> {
+    public async listRooms(): Promise<Result<LivekitRoom[], HttpError>> {
         const url = 'livekit/list-rooms';
         return await this.client.authorizedFetch<LivekitRoom[]>(url, 'GET');
     }
@@ -86,7 +86,7 @@ export class SyncFlowClient {
      * @param {string} roomName - The name of the room to delete.
      * @returns {Promise<Result<LivekitRoom, HttpError>>} - The result of the delete room operation.
      */
-    async deleteRoom(
+    public async deleteRoom(
         roomName: string
     ): Promise<Result<LivekitRoom, HttpError>> {
         const url = `livekit/delete-room/${roomName}`;
@@ -97,7 +97,7 @@ export class SyncFlowClient {
      * Gets the health status of the LiveKit server connected to the SyncFlow server.
      * @returns {Promise<Result<GenericResponse, HttpError>>} - The result of the get livekit server health operation.
      */
-    async getLivekitServerHealth(): Promise<Result<GenericResponse, HttpError>> {
+    public async getLivekitServerHealth(): Promise<Result<GenericResponse, HttpError>> {
         const url = 'livekit/health';
         return await this.client.authorizedFetch<GenericResponse>(url, 'GET');
     }
@@ -108,7 +108,7 @@ export class SyncFlowClient {
      * @param {string} roomName - The name of the room.
      * @returns {Promise<Result<EgressInfo[], HttpError>>} - The result of the list egresses operation.
      */
-    async listEgresses(roomName: string): Promise<Result<EgressInfo[], HttpError>> {
+    public async listEgresses(roomName: string): Promise<Result<EgressInfo[], HttpError>> {
         const url = `livekit/list-egresses/${roomName}`;
         return await this.client.authorizedFetch<EgressInfo[]>(url, 'GET');
     }
@@ -119,7 +119,7 @@ export class SyncFlowClient {
      * @param {string} roomName - The name of the room.
      * @returns {Promise<Result<ParticipantInfo[], HttpError>>} - The result of the list participants operation.
      */
-    async listParticipants(roomName: string): Promise<Result<ParticipantInfo[], HttpError>> {
+    public async listParticipants(roomName: string): Promise<Result<ParticipantInfo[], HttpError>> {
         const url = `livekit/list-participants/${roomName}`;
         return await this.client.authorizedFetch<ParticipantInfo[]>(url, 'GET');
     }
@@ -131,7 +131,7 @@ export class SyncFlowClient {
      * @param {string} trackSid - The SID of the track to record.
      * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the start track recording operation.
      */
-    async startTrackRecording(roomName: string, trackSid: string): Promise<Result<EgressInfo, HttpError>> {
+    public async startTrackRecording(roomName: string, trackSid: string): Promise<Result<EgressInfo, HttpError>> {
         const url = `livekit/begin-track-egress/${roomName}/${trackSid}`;
         return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
     }
@@ -143,7 +143,7 @@ export class SyncFlowClient {
      * @param {string} trackSid - The SID of the track to stop recording.
      * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the stop track recording operation.
      */
-    async stopRecording(egressId: string): Promise<Result<EgressInfo, HttpError>> {
+    public async stopRecording(egressId: string): Promise<Result<EgressInfo, HttpError>> {
         const url = `livekit/stop-recording/${egressId}`;
         return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
     }
@@ -154,7 +154,7 @@ export class SyncFlowClient {
      * @param {Partial<VideoGrants>} grants - The video grants for the user.
      * @returns {Promise<Result<TokenResponse, HttpError | SyncFlowClientError>>} - The result of the generate LiveKit token operation.
      */
-    async generateLivekitToken(
+    public async generateLivekitToken(
         identity: string,
         grants: Partial<VideoGrants>
     ): Promise<Result<TokenResponse, HttpError | SyncFlowClientError>> {
