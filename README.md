@@ -1,6 +1,16 @@
 # SyncFlow Node Client
-
-This is a reusable node client implementation for SyncFlow. The idea here is to create necessary functionality to interact with the `SyncFlow` api, in a NodeJS application. Primary beneficiaries of this package could be clients to SyncFlow, who have their own backend in NodeJS and want to integrate with `SyncFlow`.
+<p align="center">
+  <a href="https://github.com/oele-isis-vanderbilt/syncflow-node-client.git"><img src="./banner.png" alt="syncflow-node-client"></a>
+</p>
+<p align="center">
+    <em>Reusable NodeJS client implementation for SyncFlow.</em>
+</p>
+<p align="center">
+<a href="https://github.com/oele-isis-vanderbilt/syncflow-node-client/actions/workflows/test.yaml" target="_blank">
+    <img src="https://github.com/oele-isis-vanderbilt/syncflow-node-client/actions/workflows/test.yaml/badge.svg" alt="Test">
+</a>
+</p>
+This is a reusable NodeJS client implementation for SyncFlow. The idea here is to create necessary functionality to interact with the `SyncFlow` api, in a NodeJS application. Primary beneficiaries of this package could be clients to SyncFlow, who have their own backend in NodeJS and want to integrate with `SyncFlow`.
 
 ## Features
 - Manage rooms, participants and recordings in the room
@@ -38,13 +48,10 @@ const room = await client.createRoom('ROOM_NAME', {
 });
 ```
 
-ToDO: Explore the API documentation for more details on the available methods and their usage.
+ToDO: Explore the API documentation for more details on the available methods and their usage. Further usage examples can also be found in the test [file](./src/syncflow-client.test.ts).
 
 ## API Reference
-Todo
-
-## Examples
-Todo
+See the [doc file](./doc.md) for more details.
 
 ## License
 [Apache 2.0](./LICENSE)

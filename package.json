@@ -6,13 +6,15 @@
   "scripts": {
     "build": "vite build",
     "prettier": "prettier --write --ignore-unknown .",
-    "test": "vitest"
+    "test": "vitest",
+    "doc": "tsdoc  --src=src/syncflow-client.ts --dest=doc.md"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.0",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.0",
+    "tsdoc-markdown": "^0.6.0",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1",
@@ -20,6 +22,7 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
+    "livekit-server-sdk": "^2.3.0",
     "ts-monads": "github:umesh-timalsina/ts-monads"
   }
 }

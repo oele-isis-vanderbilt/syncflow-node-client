@@ -39,3 +39,8 @@ export interface LivekitRoom {
     numPublishers: number;
     activeRecording: boolean;
 }
+
+export interface GenericResponse {
+    message: string;
+    status: number;
+}
