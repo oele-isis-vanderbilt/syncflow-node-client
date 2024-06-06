@@ -66,4 +66,37 @@ describe('syncflow-client', () => {
         expect(deleteResponse.name).toBe(roomName);
         expect(deleteResponse.sid).toBe(roomDetails.sid);
     });
+
+    it('should be able to get livekit server health', async () => {
+        const healthResult = await client.getLivekitServerHealth();
+        expect(healthResult.ok().isSome()).toBe(true);
+        const health = healthResult.unwrap();
+        expect(health.status).toBe(200);
+    });
+
+    it('should be able to list egresses', async () => {
+        await client.createRoom(roomName, {
+            emptyTimeout: 600,
+            maxParticipants: 200,
+        });
+        let egressesInfoResult = await client.listEgresses(roomName);
+        expect(egressesInfoResult.ok().isSome()).toBe(true);
+        let egresses = egressesInfoResult.unwrap();
+        expect(egresses.length).toBe(0);
+        await client.deleteRoom(roomName);
+    });
+
+    it('should be able to list participants', async () => {
+        await client.createRoom(roomName, {
+            emptyTimeout: 600,
+            maxParticipants: 200,
+        });
+        let participantsInfoResult = await client.listParticipants(roomName);
+        expect(participantsInfoResult.ok().isSome()).toBe(true);
+        let participants = participantsInfoResult.unwrap();
+        expect(participants.length).toBe(0);
+        await client.deleteRoom(roomName);
+    });
+    
+
 });

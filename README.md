@@ -38,13 +38,10 @@ const room = await client.createRoom('ROOM_NAME', {
 });
 ```
 
-ToDO: Explore the API documentation for more details on the available methods and their usage.
+ToDO: Explore the API documentation for more details on the available methods and their usage. Further usage examples can also be found in the test [file](./src/syncflow-client.test.ts).
 
 ## API Reference
-Todo
-
-## Examples
-Todo
+See the [doc file](./doc.md) for more details.
 
 ## License
 [Apache 2.0](./LICENSE)

@@ -2,20 +2,32 @@
 
 import { Err, type Result } from 'ts-monads/lib/Result';
 import { BaseClient } from './base-client';
-import type { BaseClientOptions, HttpError } from './base-client';
+import { BaseClientOptions, HttpError } from './base-client';
+import type { EgressInfo, ParticipantInfo } from 'livekit-server-sdk';
 import type {
+    GenericResponse,
     CreateRoomOptions,
     LivekitRoom,
     TokenResponse,
     VideoGrants,
 } from './models';
 
+/**
+ * SyncFlowClient class is used to interact with the SyncFlow server.
+ */
 export class SyncFlowClient {
     serverUrl: string;
     apiKey: string;
     apiSecret: string;
     client: BaseClient;
 
+     /**
+     * Creates a new instance of the SyncFlowClient.
+     * @param {string} serverUrl - The URL of the SyncFlow server.
+     * @param {string} apiKey - The API key for the SyncFlow server.
+     * @param {string} apiSecret - The API secret for the SyncFlow server.
+     * @param {BaseClientOptions | undefined} clientOpts - Optional client options.
+     */
     constructor(
         serverUrl: string,
         apiKey: string,
@@ -34,7 +46,12 @@ export class SyncFlowClient {
         );
     }
 
-    //ToDos
+    /**
+     * Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
+     * @param {string} name - The name of the room.
+     * @param {Partial<CreateRoomOptions>} roomOptions - Optional room options.
+     * @returns {Promise<Result<LivekitRoom, HttpError>>} - The result of the room creation operation.
+     */
     async createRoom(
         name: string,
         roomOptions: Partial<CreateRoomOptions>
@@ -53,11 +70,22 @@ export class SyncFlowClient {
         return await this.client.authorizedFetch(url, 'POST', {}, requestBody);
     }
 
+    /**
+     * Lists all the active rooms created by the user with the provided API key/secret pairs.
+     * @returns {Promise<Result<LivekitRoom[], HttpError>>} - The result of the list rooms operation.
+     */
+
     async listRooms(): Promise<Result<LivekitRoom[], HttpError>> {
         const url = 'livekit/list-rooms';
         return await this.client.authorizedFetch<LivekitRoom[]>(url, 'GET');
     }
 
+    /**
+     * Deletes the room with the provided name from the SyncFlow connected LiveKit server.
+     * The room must have been created by the user with the provided API key/secret pairs.
+     * @param {string} roomName - The name of the room to delete.
+     * @returns {Promise<Result<LivekitRoom, HttpError>>} - The result of the delete room operation.
+     */
     async deleteRoom(
         roomName: string
     ): Promise<Result<LivekitRoom, HttpError>> {
@@ -65,14 +93,67 @@ export class SyncFlowClient {
         return await this.client.authorizedFetch<LivekitRoom>(url, 'DELETE');
     }
 
-    async getLivekitServerHealth() {}
+    /**
+     * Gets the health status of the LiveKit server connected to the SyncFlow server.
+     * @returns {Promise<Result<GenericResponse, HttpError>>} - The result of the get livekit server health operation.
+     */
+    async getLivekitServerHealth(): Promise<Result<GenericResponse, HttpError>> {
+        const url = 'livekit/health';
+        return await this.client.authorizedFetch<GenericResponse>(url, 'GET');
+    }
 
-    async listEgresses() {}
+    /**
+     * Lists all the active egresses from the room with the provided name.
+     * The room must have been created by the user with the provided API key/secret pairs.
+     * @param {string} roomName - The name of the room.
+     * @returns {Promise<Result<EgressInfo[], HttpError>>} - The result of the list egresses operation.
+     */
+    async listEgresses(roomName: string): Promise<Result<EgressInfo[], HttpError>> {
+        const url = `livekit/list-egresses/${roomName}`;
+        return await this.client.authorizedFetch<EgressInfo[]>(url, 'GET');
+    }
 
-    async listParticipants() {}
+    /**
+     * Lists all the participants in the room with the provided name.
+     * The room must have been created by the user with the provided API key/secret pairs.
+     * @param {string} roomName - The name of the room.
+     * @returns {Promise<Result<ParticipantInfo[], HttpError>>} - The result of the list participants operation.
+     */
+    async listParticipants(roomName: string): Promise<Result<ParticipantInfo[], HttpError>> {
+        const url = `livekit/list-participants/${roomName}`;
+        return await this.client.authorizedFetch<ParticipantInfo[]>(url, 'GET');
+    }
 
-    async beginTrackEgress() {}
+    /**
+     * Starts recording the track with the provided track SID in the room with the provided name.
+     * The room must have been created by the user with the provided API key/secret pairs.
+     * @param {string} roomName - The name of the room.
+     * @param {string} trackSid - The SID of the track to record.
+     * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the start track recording operation.
+     */
+    async startTrackRecording(roomName: string, trackSid: string): Promise<Result<EgressInfo, HttpError>> {
+        const url = `livekit/begin-track-egress/${roomName}/${trackSid}`;
+        return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
+    }
 
+    /**
+     * Stops recording the track with the provided track SID in the room with the provided name.
+     * The room must have been created by the user with the provided API key/secret pairs.
+     * @param {string} roomName - The name of the room.
+     * @param {string} trackSid - The SID of the track to stop recording.
+     * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the stop track recording operation.
+     */
+    async stopRecording(egressId: string): Promise<Result<EgressInfo, HttpError>> {
+        const url = `livekit/stop-recording/${egressId}`;
+        return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
+    }
+
+    /**
+     * Generates a LiveKit token for the user with the provided identity and video grants.
+     * @param {string} identity - The identity of the user.
+     * @param {Partial<VideoGrants>} grants - The video grants for the user.
+     * @returns {Promise<Result<TokenResponse, HttpError | SyncFlowClientError>>} - The result of the generate LiveKit token operation.
+     */
     async generateLivekitToken(
         identity: string,
         grants: Partial<VideoGrants>
@@ -116,32 +197,65 @@ export class SyncFlowClient {
     }
 }
 
+
+/**
+ * SyncFlowClientBuilder class is used to build a SyncFlowClient instance.
+ */
 export class SyncFlowClientBuilder {
     private serverUrl: string;
     private apiKey: string;
     private apiSecret: string;
 
+
+    /**
+     * Creates a new instance of the SyncFlowClientBuilder. 
+     * The server URL, API key, and API secret can also be set using environment variables.
+     * Use the following environment variables to set the server URL, API key, and API secret:
+     * - SYNCFLOW_SERVER_URL
+     * - SYNCFLOW_API_KEY
+     * - SYNCFLOW_API_SECRET
+     */
     constructor() {
         this.serverUrl = process.env.SYNCFLOW_SERVER_URL || '';
         this.apiKey = process.env.SYNCFLOW_API_KEY || '';
         this.apiSecret = process.env.SYNCFLOW_API_SECRET || '';
     }
 
+    /**
+     * Sets the server URL for the SyncFlowClient.
+     * @param {string} serverUrl - The URL of the SyncFlow server.
+     * @returns {SyncFlowClientBuilder} - The SyncFlowClientBuilder instance.
+     */ 
     setServerUrl(serverUrl: string): SyncFlowClientBuilder {
         this.serverUrl = serverUrl;
         return this;
     }
 
+    /**
+     * Sets the API key for the SyncFlowClient.
+     * @param {string} apiKey - The API key for the SyncFlow server.
+     * @returns {SyncFlowClientBuilder} - The SyncFlowClientBuilder instance.
+     */
     setApiKey(apiKey: string): SyncFlowClientBuilder {
         this.apiKey = apiKey;
         return this;
     }
 
+    /**
+     * Sets the API secret for the SyncFlowClient.
+     * @param {string} apiSecret - The API secret for the SyncFlow server.
+     * @returns {SyncFlowClientBuilder} - The SyncFlowClientBuilder instance.
+     */
     setApiSecret(apiSecret: string): SyncFlowClientBuilder {
         this.apiSecret = apiSecret;
         return this;
     }
 
+    /**
+     * Builds a SyncFlowClient instance with the provided server URL, API key, and API secret.
+     * @returns {SyncFlowClient} - The SyncFlowClient instance.
+     * @throws {SyncFlowClientError} - If the server URL, API key, or API secret is not provided and the environment variables are not set.
+     */
     build(): SyncFlowClient {
         if (!this.serverUrl) {
             throw new SyncFlowClientError('Server URL is required');
