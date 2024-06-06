@@ -49,7 +49,6 @@ export class SyncFlowClient {
                 ...roomOptions,
             },
         };
-        console.log(requestBody);
 
         return await this.client.authorizedFetch(url, 'POST', {}, requestBody);
     }
@@ -62,8 +61,8 @@ export class SyncFlowClient {
     async deleteRoom(
         roomName: string
     ): Promise<Result<LivekitRoom, HttpError>> {
-        const url = encodeURIComponent(`livekit/delete-room/${roomName}`);
-        return await this.client.authorizedFetch<LivekitRoom>(url, 'POST');
+        const url = `livekit/delete-room/${roomName}`;
+        return await this.client.authorizedFetch<LivekitRoom>(url, 'DELETE');
     }
 
     async getLivekitServerHealth() {}
