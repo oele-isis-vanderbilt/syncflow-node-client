@@ -149,7 +149,7 @@ SyncFlowClientBuilder class is used to build a SyncFlowClient instance.
 
 ### Constructors
 
-`public`: Creates a new instance of the SyncFlowClientBuilder. 
+`public`: Creates a new instance of the SyncFlowClientBuilder.
 The server URL, API key, and API secret can also be set using environment variables.
 Use the following environment variables to set the server URL, API key, and API secret:
 - SYNCFLOW_SERVER_URL

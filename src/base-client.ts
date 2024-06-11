@@ -120,7 +120,7 @@ export class BaseClient {
         };
 
         const requestBody = body || {};
-        const requestInit = {
+        const requestInit: RequestInit = {
             method,
             headers: requestHeaders,
         };

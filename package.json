@@ -1,24 +1,35 @@
 {
   "name": "syncflow-node-client",
-  "private": false,
   "version": "0.1.6",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Umesh Timalsina",
+    "email": "umesh.timalsina@vanderbilt.edu"
+  },
   "type": "module",
-  "main": "dist/syncflow-node-client.cjs.js",
-  "module": "dist/syncflow-node-client.es.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/syncflow-node-client.es.js",
-      "require": "./dist/syncflow-node-client.cjs.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "tsup",
     "prettier": "prettier --write --ignore-unknown .",
     "test": "vitest",
+    "prepublishOnly": "npm run build",
     "doc": "tsdoc  --src=src/syncflow-client.ts --dest=doc.md",
     "bump:patch": "npm version patch && git push --follow-tags",
     "bump:minor": "npm version minor && git push --follow-tags",
@@ -29,18 +40,25 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.14.2",
     "dotenv": "^16.4.5",
     "prettier": "^3.3.0",
     "tsdoc-markdown": "^0.6.0",
+    "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "vite-plugin-dts": "^3.9.1",
     "vitest": "^1.6.0"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
     "livekit-server-sdk": "^2.3.0",
     "ts-monads": "github:umesh-timalsina/ts-monads"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oele-isis-vanderbilt/syncflow-node-client.git"
   }
 }

@@ -1,15 +1,11 @@
-import { defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config.js';
+import { defineConfig } from 'vitest/config';
 import { config } from 'dotenv';
 
-export default mergeConfig(
-    viteConfig,
-    defineConfig({
-        test: {
-            root: './src',
-            env: {
-                ...config({ path: './.env.test' }).parsed,
-            },
+export default defineConfig({
+    test: {
+        root: './src',
+        env: {
+            ...config({ path: './.env.test' }).parsed,
         },
-    })
-);
+    },
+});
