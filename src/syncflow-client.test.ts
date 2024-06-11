@@ -97,6 +97,4 @@ describe('syncflow-client', () => {
         expect(participants.length).toBe(0);
         await client.deleteRoom(roomName);
     });
-    
-
 });

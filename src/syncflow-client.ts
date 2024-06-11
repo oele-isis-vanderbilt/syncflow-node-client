@@ -21,7 +21,7 @@ export class SyncFlowClient {
     apiSecret: string;
     client: BaseClient;
 
-     /**
+    /**
      * Creates a new instance of the SyncFlowClient.
      * @param {string} serverUrl - The URL of the SyncFlow server.
      * @param {string} apiKey - The API key for the SyncFlow server.
@@ -97,7 +97,9 @@ export class SyncFlowClient {
      * Gets the health status of the LiveKit server connected to the SyncFlow server.
      * @returns {Promise<Result<GenericResponse, HttpError>>} - The result of the get livekit server health operation.
      */
-    public async getLivekitServerHealth(): Promise<Result<GenericResponse, HttpError>> {
+    public async getLivekitServerHealth(): Promise<
+        Result<GenericResponse, HttpError>
+    > {
         const url = 'livekit/health';
         return await this.client.authorizedFetch<GenericResponse>(url, 'GET');
     }
@@ -108,7 +110,9 @@ export class SyncFlowClient {
      * @param {string} roomName - The name of the room.
      * @returns {Promise<Result<EgressInfo[], HttpError>>} - The result of the list egresses operation.
      */
-    public async listEgresses(roomName: string): Promise<Result<EgressInfo[], HttpError>> {
+    public async listEgresses(
+        roomName: string
+    ): Promise<Result<EgressInfo[], HttpError>> {
         const url = `livekit/list-egresses/${roomName}`;
         return await this.client.authorizedFetch<EgressInfo[]>(url, 'GET');
     }
@@ -119,7 +123,9 @@ export class SyncFlowClient {
      * @param {string} roomName - The name of the room.
      * @returns {Promise<Result<ParticipantInfo[], HttpError>>} - The result of the list participants operation.
      */
-    public async listParticipants(roomName: string): Promise<Result<ParticipantInfo[], HttpError>> {
+    public async listParticipants(
+        roomName: string
+    ): Promise<Result<ParticipantInfo[], HttpError>> {
         const url = `livekit/list-participants/${roomName}`;
         return await this.client.authorizedFetch<ParticipantInfo[]>(url, 'GET');
     }
@@ -131,7 +137,10 @@ export class SyncFlowClient {
      * @param {string} trackSid - The SID of the track to record.
      * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the start track recording operation.
      */
-    public async startTrackRecording(roomName: string, trackSid: string): Promise<Result<EgressInfo, HttpError>> {
+    public async startTrackRecording(
+        roomName: string,
+        trackSid: string
+    ): Promise<Result<EgressInfo, HttpError>> {
         const url = `livekit/begin-track-egress/${roomName}/${trackSid}`;
         return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
     }
@@ -143,7 +152,9 @@ export class SyncFlowClient {
      * @param {string} trackSid - The SID of the track to stop recording.
      * @returns {Promise<Result<EgressInfo, HttpError>>} - The result of the stop track recording operation.
      */
-    public async stopRecording(egressId: string): Promise<Result<EgressInfo, HttpError>> {
+    public async stopRecording(
+        egressId: string
+    ): Promise<Result<EgressInfo, HttpError>> {
         const url = `livekit/stop-recording/${egressId}`;
         return await this.client.authorizedFetch<EgressInfo>(url, 'POST');
     }
@@ -197,7 +208,6 @@ export class SyncFlowClient {
     }
 }
 
-
 /**
  * SyncFlowClientBuilder class is used to build a SyncFlowClient instance.
  */
@@ -206,9 +216,8 @@ export class SyncFlowClientBuilder {
     private apiKey: string;
     private apiSecret: string;
 
-
     /**
-     * Creates a new instance of the SyncFlowClientBuilder. 
+     * Creates a new instance of the SyncFlowClientBuilder.
      * The server URL, API key, and API secret can also be set using environment variables.
      * Use the following environment variables to set the server URL, API key, and API secret:
      * - SYNCFLOW_SERVER_URL
@@ -225,7 +234,7 @@ export class SyncFlowClientBuilder {
      * Sets the server URL for the SyncFlowClient.
      * @param {string} serverUrl - The URL of the SyncFlow server.
      * @returns {SyncFlowClientBuilder} - The SyncFlowClientBuilder instance.
-     */ 
+     */
     setServerUrl(serverUrl: string): SyncFlowClientBuilder {
         this.serverUrl = serverUrl;
         return this;

@@ -13,3 +13,8 @@ playground/external/public/slash@3.0.0.js
 playground/ssr-html/public/slash@3.0.0.js
 package.json
 package-lock.json
+doc.md
+.github
+dist
+node_modules
+README.md
