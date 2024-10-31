@@ -1,3 +1,3 @@
-import { SyncFlowClientBuilder, SyncFlowClient } from './syncflow-client';
+import { ProjectClientBuilder, ProjectClient } from './project-client';
 
-export { SyncFlowClientBuilder, SyncFlowClient };
+export { ProjectClientBuilder, ProjectClient };

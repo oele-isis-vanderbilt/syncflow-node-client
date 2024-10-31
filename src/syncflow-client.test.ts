@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest';
-import { SyncFlowClient, SyncFlowClientBuilder } from './syncflow-client';
+import { SyncFlowClient, SyncFlowClientBuilder } from './project-client';
 
 const randomRoomName = () => {
     const prefix = `NodeJSClient`;
