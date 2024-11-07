@@ -249,7 +249,7 @@ export class ProjectClientBuilder {
         this.serverUrl = process.env.SYNCFLOW_SERVER_URL || '';
         this.apiKey = process.env.SYNCFLOW_API_KEY || '';
         this.apiSecret = process.env.SYNCFLOW_API_SECRET || '';
-        this.projectId = '';
+        this.projectId = process.env.SYNCFLOW_PROJECT_ID || '';
     }
 
     /**
