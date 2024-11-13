@@ -1,160 +1,210 @@
-## :factory: SyncFlowClient
+## :factory: ProjectClient
 
-SyncFlowClient class is used to interact with the SyncFlow server.
+ProjectClient provides methods to interact with the Syncflow server API,
+managing projects, sessions, and devices within the Syncflow ecosystem.
 
 ### Constructors
 
-`public`: Creates a new instance of the SyncFlowClient.
+`public`: Initializes a new ProjectClient instance for communicating with the Syncflow server.
 
 Parameters:
 
-* `serverUrl`: - The URL of the SyncFlow server.
-* `apiKey`: - The API key for the SyncFlow server.
-* `apiSecret`: - The API secret for the SyncFlow server.
-* `clientOpts`: - Optional client options.
+* `serverUrl`: - Base URL of the Syncflow server endpoint
+* `apiKey`: - Authentication API key for server access
+* `apiSecret`: - Secret key paired with the API key for authentication
+* `projectId`: - Unique identifier for the target project
+* `clientOpts`: - Configuration options for the client connection
 
 
 ### Methods
 
-- [createRoom](#gear-createroom)
-- [listRooms](#gear-listrooms)
-- [deleteRoom](#gear-deleteroom)
-- [getLivekitServerHealth](#gear-getlivekitserverhealth)
-- [listEgresses](#gear-listegresses)
-- [listParticipants](#gear-listparticipants)
-- [startTrackRecording](#gear-starttrackrecording)
-- [stopRecording](#gear-stoprecording)
-- [generateLivekitToken](#gear-generatelivekittoken)
+- [getProjectDetails](#gear-getprojectdetails)
+- [deleteProject](#gear-deleteproject)
+- [summarizeProject](#gear-summarizeproject)
+- [createSession](#gear-createsession)
+- [getSessions](#gear-getsessions)
+- [getSession](#gear-getsession)
+- [getParticipants](#gear-getparticipants)
+- [getLivekitSessionInfo](#gear-getlivekitsessioninfo)
+- [generateSessionToken](#gear-generatesessiontoken)
+- [stopSession](#gear-stopsession)
+- [getDevices](#gear-getdevices)
+- [getDevice](#gear-getdevice)
+- [registerDevice](#gear-registerdevice)
+- [deleteDevice](#gear-deletedevice)
 
-#### :gear: createRoom
+#### :gear: getProjectDetails
 
-Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
+Retrieves detailed information about the current project.
 
 | Method | Type |
 | ---------- | ---------- |
-| `createRoom` | `(name: string, roomOptions: Partial<CreateRoomOptions>) => Promise<Result<LivekitRoom, HttpError>>` |
+| `getProjectDetails` | `() => Promise<Result<ProjectInfo, HttpError>>` |
+
+#### :gear: deleteProject
+
+Permanently removes the current project and all associated resources.
+
+| Method | Type |
+| ---------- | ---------- |
+| `deleteProject` | `() => Promise<Result<ProjectInfo, HttpError>>` |
+
+#### :gear: summarizeProject
+
+Generates a summary of the project's current state and usage statistics.
+
+| Method | Type |
+| ---------- | ---------- |
+| `summarizeProject` | `() => Promise<Result<ProjectSummary, HttpError>>` |
+
+#### :gear: createSession
+
+Initiates a new session within the project on the LiveKit server.
+
+| Method | Type |
+| ---------- | ---------- |
+| `createSession` | `(newSessionRequest: Partial<NewSessionRequest>) => Promise<Result<ProjectSessionResponse, HttpError>>` |
 
 Parameters:
 
-* `name`: - The name of the room.
-* `roomOptions`: - Optional room options.
+* `newSessionRequest`: - Session configuration parameters
 
 
-#### :gear: listRooms
+#### :gear: getSessions
 
-Lists all the active rooms created by the user with the provided API key/secret pairs.
-
-| Method | Type |
-| ---------- | ---------- |
-| `listRooms` | `() => Promise<Result<LivekitRoom[], HttpError>>` |
-
-#### :gear: deleteRoom
-
-Deletes the room with the provided name from the SyncFlow connected LiveKit server.
-The room must have been created by the user with the provided API key/secret pairs.
+Retrieves all active sessions within the project.
 
 | Method | Type |
 | ---------- | ---------- |
-| `deleteRoom` | `(roomName: string) => Promise<Result<LivekitRoom, HttpError>>` |
+| `getSessions` | `() => Promise<Result<ProjectSessionResponse[], HttpError>>` |
+
+#### :gear: getSession
+
+Fetches details for a specific session by ID.
+
+| Method | Type |
+| ---------- | ---------- |
+| `getSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse[], HttpError>>` |
 
 Parameters:
 
-* `roomName`: - The name of the room to delete.
+* `sessionId`: - Unique identifier of the target session
 
 
-#### :gear: getLivekitServerHealth
+#### :gear: getParticipants
 
-Gets the health status of the LiveKit server connected to the SyncFlow server.
-
-| Method | Type |
-| ---------- | ---------- |
-| `getLivekitServerHealth` | `() => Promise<Result<GenericResponse, HttpError>>` |
-
-#### :gear: listEgresses
-
-Lists all the active egresses from the room with the provided name.
-The room must have been created by the user with the provided API key/secret pairs.
+Lists all participants currently active in a specific session.
 
 | Method | Type |
 | ---------- | ---------- |
-| `listEgresses` | `(roomName: string) => Promise<Result<EgressInfo[], HttpError>>` |
+| `getParticipants` | `(sessionId: string) => Promise<Result<ParticipantInfo[], HttpError>>` |
 
 Parameters:
 
-* `roomName`: - The name of the room.
+* `sessionId`: - Unique identifier of the target session
 
 
-#### :gear: listParticipants
+#### :gear: getLivekitSessionInfo
 
-Lists all the participants in the room with the provided name.
-The room must have been created by the user with the provided API key/secret pairs.
-
-| Method | Type |
-| ---------- | ---------- |
-| `listParticipants` | `(roomName: string) => Promise<Result<ParticipantInfo[], HttpError>>` |
-
-Parameters:
-
-* `roomName`: - The name of the room.
-
-
-#### :gear: startTrackRecording
-
-Starts recording the track with the provided track SID in the room with the provided name.
-The room must have been created by the user with the provided API key/secret pairs.
+Retrieves LiveKit-specific session metadata and configuration.
 
 | Method | Type |
 | ---------- | ---------- |
-| `startTrackRecording` | `(roomName: string, trackSid: string) => Promise<Result<EgressInfo, HttpError>>` |
+| `getLivekitSessionInfo` | `(sessionId: string) => Promise<Result<any, HttpError>>` |
 
 Parameters:
 
-* `roomName`: - The name of the room.
-* `trackSid`: - The SID of the track to record.
+* `sessionId`: - Unique identifier of the target session
 
 
-#### :gear: stopRecording
+#### :gear: generateSessionToken
 
-Stops recording the track with the provided track SID in the room with the provided name.
-The room must have been created by the user with the provided API key/secret pairs.
+Creates an access token for a specific session.
 
 | Method | Type |
 | ---------- | ---------- |
-| `stopRecording` | `(egressId: string) => Promise<Result<EgressInfo, HttpError>>` |
+| `generateSessionToken` | `(sessionId: string, tokenRequest: Partial<TokenRequest>) => Promise<Result<TokenResponse, HttpError>>` |
 
 Parameters:
 
-* `roomName`: - The name of the room.
-* `trackSid`: - The SID of the track to stop recording.
+* `sessionId`: - Unique identifier of the target session
+* `tokenRequest`: - Token configuration and permissions
 
 
-#### :gear: generateLivekitToken
+#### :gear: stopSession
 
-Generates a LiveKit token for the user with the provided identity and video grants.
+Terminates an active session and disconnects all participants.
 
 | Method | Type |
 | ---------- | ---------- |
-| `generateLivekitToken` | `(identity: string, grants: Partial<VideoGrants>) => Promise<Result<TokenResponse, HttpError or SyncFlowClientError>>` |
+| `stopSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse[], HttpError>>` |
 
 Parameters:
 
-* `identity`: - The identity of the user.
-* `grants`: - The video grants for the user.
+* `sessionId`: - Unique identifier of the session to stop
+
+
+#### :gear: getDevices
+
+Lists all registered devices in the project.
+
+| Method | Type |
+| ---------- | ---------- |
+| `getDevices` | `() => Promise<Result<DeviceResponse[], HttpError>>` |
+
+#### :gear: getDevice
+
+Retrieves information about a specific device.
+
+| Method | Type |
+| ---------- | ---------- |
+| `getDevice` | `(deviceId: string) => Promise<Result<DeviceResponse[], HttpError>>` |
+
+Parameters:
+
+* `deviceId`: - Unique identifier of the target device
+
+
+#### :gear: registerDevice
+
+Registers a new device with the project.
+
+| Method | Type |
+| ---------- | ---------- |
+| `registerDevice` | `(deviceRegisterRequest: Partial<DeviceRegisterRequest>) => Promise<Result<DeviceResponse, HttpError>>` |
+
+Parameters:
+
+* `deviceRegisterRequest`: - Device registration parameters
+
+
+#### :gear: deleteDevice
+
+Removes a device from the project.
+
+| Method | Type |
+| ---------- | ---------- |
+| `deleteDevice` | `(deviceId: string) => Promise<Result<DeviceResponse[], HttpError>>` |
+
+Parameters:
+
+* `deviceId`: - Unique identifier of the device to remove
 
 
 
-## :factory: SyncFlowClientBuilder
+## :factory: ProjectClientBuilder
 
-SyncFlowClientBuilder class is used to build a SyncFlowClient instance.
+Builder pattern implementation for creating ProjectClient instances with
+flexible configuration options and environment variable support.
 
 ### Constructors
 
-`public`: Creates a new instance of the SyncFlowClientBuilder.
-The server URL, API key, and API secret can also be set using environment variables.
-Use the following environment variables to set the server URL, API key, and API secret:
-- SYNCFLOW_SERVER_URL
-- SYNCFLOW_API_KEY
-- SYNCFLOW_API_SECRET
+`public`: Initializes a new ProjectClientBuilder with optional environment variable configuration.
+Supported environment variables:
+- SYNCFLOW_SERVER_URL: Base server URL
+- SYNCFLOW_API_KEY: Authentication API key
+- SYNCFLOW_API_SECRET: Authentication secret
+- SYNCFLOW_PROJECT_ID: Target project identifier
 
 
 
@@ -163,54 +213,82 @@ Use the following environment variables to set the server URL, API key, and API 
 - [setServerUrl](#gear-setserverurl)
 - [setApiKey](#gear-setapikey)
 - [setApiSecret](#gear-setapisecret)
+- [setProjectId](#gear-setprojectid)
+- [setOptions](#gear-setoptions)
 - [build](#gear-build)
 
 #### :gear: setServerUrl
 
-Sets the server URL for the SyncFlowClient.
+Configures the Syncflow server endpoint URL.
 
 | Method | Type |
 | ---------- | ---------- |
-| `setServerUrl` | `(serverUrl: string) => SyncFlowClientBuilder` |
+| `setServerUrl` | `(serverUrl: string) => ProjectClientBuilder` |
 
 Parameters:
 
-* `serverUrl`: - The URL of the SyncFlow server.
+* `serverUrl`: - Base URL for the Syncflow server
 
 
 #### :gear: setApiKey
 
-Sets the API key for the SyncFlowClient.
+Sets the API key for server authentication.
 
 | Method | Type |
 | ---------- | ---------- |
-| `setApiKey` | `(apiKey: string) => SyncFlowClientBuilder` |
+| `setApiKey` | `(apiKey: string) => ProjectClientBuilder` |
 
 Parameters:
 
-* `apiKey`: - The API key for the SyncFlow server.
+* `apiKey`: - Authentication API key
 
 
 #### :gear: setApiSecret
 
-Sets the API secret for the SyncFlowClient.
+Sets the API secret for server authentication.
 
 | Method | Type |
 | ---------- | ---------- |
-| `setApiSecret` | `(apiSecret: string) => SyncFlowClientBuilder` |
+| `setApiSecret` | `(apiSecret: string) => ProjectClientBuilder` |
 
 Parameters:
 
-* `apiSecret`: - The API secret for the SyncFlow server.
+* `apiSecret`: - Authentication secret key
+
+
+#### :gear: setProjectId
+
+Sets the target project identifier.
+
+| Method | Type |
+| ---------- | ---------- |
+| `setProjectId` | `(projectId: string) => ProjectClientBuilder` |
+
+Parameters:
+
+* `projectId`: - Unique project identifier
+
+
+#### :gear: setOptions
+
+Configures additional client connection options.
+
+| Method | Type |
+| ---------- | ---------- |
+| `setOptions` | `(options: BaseClientOptions) => ProjectClientBuilder` |
+
+Parameters:
+
+* `options`: - Client configuration options
 
 
 #### :gear: build
 
-Builds a SyncFlowClient instance with the provided server URL, API key, and API secret.
+Creates a new ProjectClient instance with the configured parameters.
 
 | Method | Type |
 | ---------- | ---------- |
-| `build` | `() => SyncFlowClient` |
+| `build` | `() => ProjectClient` |
 
 
-## :factory: SyncFlowClientError
+## :factory: ProjectClientError

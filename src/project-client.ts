@@ -14,7 +14,8 @@ import type {
 } from './models';
 
 /**
- * ProjectClient class is used to interact with the Syncflow server.
+ * ProjectClient provides methods to interact with the Syncflow server API,
+ * managing projects, sessions, and devices within the Syncflow ecosystem.
  */
 export class ProjectClient {
     serverUrl: string;
@@ -23,14 +24,13 @@ export class ProjectClient {
     projectId: string;
     client: BaseClient;
 
-
     /**
-     * Creates a new instance of the ProjectClient.
-     * @param {string} serverUrl - The URL of the Syncflow server.
-     * @param {string} apiKey - The API key for the SyncFlow server.
-     * @param {string} apiSecret - The API secret for the SyncFlow server.
-     * @param {string} projectId - The project ID.
-     * @param {BaseClientOptions | undefined} clientOpts - Optional client options.
+     * Initializes a new ProjectClient instance for communicating with the Syncflow server.
+     * @param {string} serverUrl - Base URL of the Syncflow server endpoint
+     * @param {string} apiKey - Authentication API key for server access
+     * @param {string} apiSecret - Secret key paired with the API key for authentication
+     * @param {string} projectId - Unique identifier for the target project
+     * @param {BaseClientOptions | undefined} clientOpts - Configuration options for the client connection
      */
     constructor(
         serverUrl: string,
@@ -39,123 +39,127 @@ export class ProjectClient {
         projectId: string,
         clientOpts: BaseClientOptions | undefined = undefined
     ) {
-        this.serverUrl  = serverUrl;
+        this.serverUrl = serverUrl;
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
         this.projectId = projectId;
-        
+
         const claims = new ProjectTokenClaims(
-            apiKey, 
-            apiSecret, 
-            projectId, 
+            apiKey,
+            apiSecret,
+            projectId,
             3600 // default 1 hour expiration
         );
-        
-        this.client = new BaseClient(
-            serverUrl,
-            claims,
-            {
-                autoRenewToken: clientOpts?.autoRenewToken ?? true
-            }
-        );
+
+        this.client = new BaseClient(serverUrl, claims, {
+            autoRenewToken: clientOpts?.autoRenewToken ?? true,
+        });
     }
 
     /**
-     * Lists all the details of a project created by the user with the provided API key/secret pairs.
-     * @returns {Promise<Result<ProjectInfo, HttpError>>} - The result of the get project details operation.
+     * Retrieves detailed information about the current project.
+     * @returns {Promise<Result<ProjectInfo, HttpError>>} Project details including configuration, status, and metadata
      */
-
     public async getProjectDetails(): Promise<Result<ProjectInfo, HttpError>> {
         const url = `projects/${this.projectId}`;
         return await this.client.authorizedFetch<ProjectInfo>(url, 'GET');
     }
 
     /**
-     * Lists all the active projects created by the user with the provided API key/secret pairs.
-     * @returns {Promise<Result<ProjectInfo, HttpError>>} - The result of the list rooms operation.
+     * Permanently removes the current project and all associated resources.
+     * @returns {Promise<Result<ProjectInfo, HttpError>>} Confirmation of project deletion with final project state
      */
-
     public async deleteProject(): Promise<Result<ProjectInfo, HttpError>> {
         const url = `projects/${this.projectId}`;
         return await this.client.authorizedFetch<ProjectInfo>(url, 'DELETE');
     }
 
     /**
-     * Lists all the active projects created by the user with the provided API key/secret pairs.
-     * @returns {Promise<Result<ProjectSummary, HttpError>>} - The result of the list rooms operation.
+     * Generates a summary of the project's current state and usage statistics.
+     * @returns {Promise<Result<ProjectSummary, HttpError>>} Overview of project metrics and status
      */
-
-    public async summarizeProject(): Promise<Result<ProjectSummary, HttpError>> {
+    public async summarizeProject(): Promise<
+        Result<ProjectSummary, HttpError>
+    > {
         const url = `projects/${this.projectId}/summarize`;
         return await this.client.authorizedFetch<ProjectSummary>(url, 'GET');
     }
 
     /**
-     * Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
-     * @param {Partial<NewSessionRequest>} newSessionRequest - Optional room options.
-     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} - The result of the room creation operation.
+     * Initiates a new session within the project on the LiveKit server.
+     * @param {Partial<NewSessionRequest>} newSessionRequest - Session configuration parameters
+     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} Details of the created session
      */
     public async createSession(
         newSessionRequest: Partial<NewSessionRequest>
     ): Promise<Result<ProjectSessionResponse, HttpError>> {
         const url = `projects/${this.projectId}/create-session`;
-        return await this.client.authorizedFetch(url, 'POST', {}, newSessionRequest);
+        return await this.client.authorizedFetch(
+            url,
+            'POST',
+            {},
+            newSessionRequest
+        );
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @returns {Promise<Result<ProjectSessionResponse[], HttpError>>} - The result of the list rooms operation.
+     * Retrieves all active sessions within the project.
+     * @returns {Promise<Result<ProjectSessionResponse[], HttpError>>} List of all current session details
      */
-
-    public async getSessions(): Promise<Result<ProjectSessionResponse[], HttpError>> {
+    public async getSessions(): Promise<
+        Result<ProjectSessionResponse[], HttpError>
+    > {
         const url = `projects/${this.projectId}/sessions`;
-        return await this.client.authorizedFetch<ProjectSessionResponse[]>(url, 'GET');
+        return await this.client.authorizedFetch<ProjectSessionResponse[]>(
+            url,
+            'GET'
+        );
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} sessionId 
-     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} - The result of the list rooms operation.
+     * Fetches details for a specific session by ID.
+     * @param {string} sessionId - Unique identifier of the target session
+     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} Detailed session information
      */
-
     public async getSession(
-        sessionId : string
+        sessionId: string
     ): Promise<Result<ProjectSessionResponse[], HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}`;
-        return await this.client.authorizedFetch<ProjectSessionResponse>(url, 'GET');
+        return await this.client.authorizedFetch<ProjectSessionResponse>(
+            url,
+            'GET'
+        );
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} sessionId 
-     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} - The result of the list rooms operation.
+     * Lists all participants currently active in a specific session.
+     * @param {string} sessionId - Unique identifier of the target session
+     * @returns {Promise<Result<ParticipantInfo[], HttpError>>} Array of participant details
      */
-
     public async getParticipants(
-        sessionId : string
+        sessionId: string
     ): Promise<Result<ParticipantInfo[], HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}/participants`;
         return await this.client.authorizedFetch<ParticipantInfo[]>(url, 'GET');
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} sessionId 
-     * @returns {Promise<Result<any, HttpError>>} - The result of the list rooms operation.
+     * Retrieves LiveKit-specific session metadata and configuration.
+     * @param {string} sessionId - Unique identifier of the target session
+     * @returns {Promise<Result<any, HttpError>>} LiveKit session configuration details
      */
-
     public async getLivekitSessionInfo(
-        sessionId : string
+        sessionId: string
     ): Promise<Result<any, HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}/livekit-session-info`;
         return await this.client.authorizedFetch(url, 'GET');
     }
 
     /**
-     * Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
-     * @param {string} sessionId - Optional room options.
-     * @param {TokenRequest} tokenRequest - Optional room options.
-     * @returns {Promise<Result<TokenResponse, HttpError>>} - The result of the room creation operation.
+     * Creates an access token for a specific session.
+     * @param {string} sessionId - Unique identifier of the target session
+     * @param {TokenRequest} tokenRequest - Token configuration and permissions
+     * @returns {Promise<Result<TokenResponse, HttpError>>} Generated session access token
      */
     public async generateSessionToken(
         sessionId: string,
@@ -166,34 +170,36 @@ export class ProjectClient {
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} sessionId 
-     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} - The result of the list rooms operation.
+     * Terminates an active session and disconnects all participants.
+     * @param {string} sessionId - Unique identifier of the session to stop
+     * @returns {Promise<Result<ProjectSessionResponse, HttpError>>} Final state of the terminated session
      */
-
     public async stopSession(
-        sessionId : string
+        sessionId: string
     ): Promise<Result<ProjectSessionResponse[], HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}/stop`;
-        return await this.client.authorizedFetch<ProjectSessionResponse>(url, 'POST', {}, {});
+        return await this.client.authorizedFetch<ProjectSessionResponse>(
+            url,
+            'POST',
+            {},
+            {}
+        );
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @returns {Promise<Result<DeviceResponse[], HttpError>>} - The result of the list rooms operation.
+     * Lists all registered devices in the project.
+     * @returns {Promise<Result<DeviceResponse[], HttpError>>} Array of device information
      */
-
     public async getDevices(): Promise<Result<DeviceResponse[], HttpError>> {
         const url = `projects/${this.projectId}/devices`;
         return await this.client.authorizedFetch<DeviceResponse[]>(url, 'GET');
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} deviceId
-     * @returns {Promise<Result<DeviceResponse, HttpError>>} - The result of the list rooms operation.
+     * Retrieves information about a specific device.
+     * @param {string} deviceId - Unique identifier of the target device
+     * @returns {Promise<Result<DeviceResponse, HttpError>>} Detailed device information
      */
-
     public async getDevice(
         deviceId: string
     ): Promise<Result<DeviceResponse[], HttpError>> {
@@ -202,23 +208,27 @@ export class ProjectClient {
     }
 
     /**
-     * Creates a new room on the SyncFlow connected LiveKit server for the user with the provided API key/secret pairs.
-     * @param {Partial<DeviceRegisterRequest>} deviceRegisterRequest - Optional room options.
-     * @returns {Promise<Result<DeviceResponse, HttpError>>} - The result of the room creation operation.
+     * Registers a new device with the project.
+     * @param {Partial<DeviceRegisterRequest>} deviceRegisterRequest - Device registration parameters
+     * @returns {Promise<Result<DeviceResponse, HttpError>>} Confirmation of device registration
      */
     public async registerDevice(
         deviceRegisterRequest: Partial<DeviceRegisterRequest>
     ): Promise<Result<DeviceResponse, HttpError>> {
         const url = `projects/${this.projectId}/create-session`;
-        return await this.client.authorizedFetch(url, 'POST', {}, deviceRegisterRequest);
+        return await this.client.authorizedFetch(
+            url,
+            'POST',
+            {},
+            deviceRegisterRequest
+        );
     }
 
     /**
-     * Lists all the active rooms created by the user with the provided API key/secret pairs.
-     * @param {string} deviceId
-     * @returns {Promise<Result<DeviceResponse, HttpError>>} - The result of the list rooms operation.
+     * Removes a device from the project.
+     * @param {string} deviceId - Unique identifier of the device to remove
+     * @returns {Promise<Result<DeviceResponse, HttpError>>} Final state of the removed device
      */
-
     public async deleteDevice(
         deviceId: string
     ): Promise<Result<DeviceResponse[], HttpError>> {
@@ -228,7 +238,8 @@ export class ProjectClient {
 }
 
 /**
- * ProjectClientBuilder class is used to build a ProjectClient instance.
+ * Builder pattern implementation for creating ProjectClient instances with
+ * flexible configuration options and environment variable support.
  */
 export class ProjectClientBuilder {
     private serverUrl: string;
@@ -238,12 +249,12 @@ export class ProjectClientBuilder {
     private options?: BaseClientOptions;
 
     /**
-     * Creates a new instance of the ProjectClientBuilder.
-     * The server URL, API key, and API secret can also be set using environment variables.
-     * Use the following environment variables to set the server URL, API key, and API secret:
-     * - SYNCFLOW_SERVER_URL
-     * - SYNCFLOW_API_KEY
-     * - SYNCFLOW_API_SECRET
+     * Initializes a new ProjectClientBuilder with optional environment variable configuration.
+     * Supported environment variables:
+     * - SYNCFLOW_SERVER_URL: Base server URL
+     * - SYNCFLOW_API_KEY: Authentication API key
+     * - SYNCFLOW_API_SECRET: Authentication secret
+     * - SYNCFLOW_PROJECT_ID: Target project identifier
      */
     constructor() {
         this.serverUrl = process.env.SYNCFLOW_SERVER_URL || '';
@@ -253,9 +264,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Sets the server URL for the ProjectClient.
-     * @param {string} serverUrl - The URL of the Project server.
-     * @returns {ProjectClientBuilder} - The ProjectClientBuilder instance.
+     * Configures the Syncflow server endpoint URL.
+     * @param {string} serverUrl - Base URL for the Syncflow server
+     * @returns {ProjectClientBuilder} Builder instance for method chaining
      */
     setServerUrl(serverUrl: string): ProjectClientBuilder {
         this.serverUrl = serverUrl;
@@ -263,9 +274,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Sets the API key for the ProjectClient.
-     * @param {string} apiKey - The API key for the Project server.
-     * @returns {ProjectClientBuilder} - The ProjectClientBuilder instance.
+     * Sets the API key for server authentication.
+     * @param {string} apiKey - Authentication API key
+     * @returns {ProjectClientBuilder} Builder instance for method chaining
      */
     setApiKey(apiKey: string): ProjectClientBuilder {
         this.apiKey = apiKey;
@@ -273,9 +284,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Sets the API secret for the ProjectClient.
-     * @param {string} apiSecret - The API secret for the Project server.
-     * @returns {ProjectClientBuilder} - The ProjectClientBuilder instance.
+     * Sets the API secret for server authentication.
+     * @param {string} apiSecret - Authentication secret key
+     * @returns {ProjectClientBuilder} Builder instance for method chaining
      */
     setApiSecret(apiSecret: string): ProjectClientBuilder {
         this.apiSecret = apiSecret;
@@ -283,9 +294,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Sets the project ID for the ProjectClient.
-     * @param {string} projectId - The project ID.
-     * @returns {ProjectClientBuilder} - The ProjectClientBuilder instance.
+     * Sets the target project identifier.
+     * @param {string} projectId - Unique project identifier
+     * @returns {ProjectClientBuilder} Builder instance for method chaining
      */
     setProjectId(projectId: string): ProjectClientBuilder {
         this.projectId = projectId;
@@ -293,9 +304,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Sets the client options for the ProjectClient.
-     * @param {BaseClientOptions} options - The client options.
-     * @returns {ProjectClientBuilder} - The ProjectClientBuilder instance.
+     * Configures additional client connection options.
+     * @param {BaseClientOptions} options - Client configuration options
+     * @returns {ProjectClientBuilder} Builder instance for method chaining
      */
     setOptions(options: BaseClientOptions): ProjectClientBuilder {
         this.options = options;
@@ -303,9 +314,9 @@ export class ProjectClientBuilder {
     }
 
     /**
-     * Builds a ProjectClient instance with the provided server URL, API key, and API secret.
-     * @returns {ProjectClient} - The ProjectClient instance.
-     * @throws {ProjectClientError} - If the server URL, API key, or API secret is not provided and the environment variables are not set.
+     * Creates a new ProjectClient instance with the configured parameters.
+     * @returns {ProjectClient} Configured ProjectClient instance
+     * @throws {ProjectClientError} If required configuration parameters are missing
      */
     build(): ProjectClient {
         if (!this.serverUrl) {
@@ -322,8 +333,8 @@ export class ProjectClientBuilder {
         }
 
         return new ProjectClient(
-            this.serverUrl, 
-            this.apiKey, 
+            this.serverUrl,
+            this.apiKey,
             this.apiSecret,
             this.projectId,
             this.options
