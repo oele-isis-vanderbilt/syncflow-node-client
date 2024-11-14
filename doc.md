@@ -84,7 +84,7 @@ Fetches details for a specific session by ID.
 
 | Method | Type |
 | ---------- | ---------- |
-| `getSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse[], HttpError>>` |
+| `getSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse, HttpError>>` |
 
 Parameters:
 
@@ -137,7 +137,7 @@ Terminates an active session and disconnects all participants.
 
 | Method | Type |
 | ---------- | ---------- |
-| `stopSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse[], HttpError>>` |
+| `stopSession` | `(sessionId: string) => Promise<Result<ProjectSessionResponse, HttpError>>` |
 
 Parameters:
 
@@ -158,7 +158,7 @@ Retrieves information about a specific device.
 
 | Method | Type |
 | ---------- | ---------- |
-| `getDevice` | `(deviceId: string) => Promise<Result<DeviceResponse[], HttpError>>` |
+| `getDevice` | `(deviceId: string) => Promise<Result<DeviceResponse, HttpError>>` |
 
 Parameters:
 
@@ -184,7 +184,7 @@ Removes a device from the project.
 
 | Method | Type |
 | ---------- | ---------- |
-| `deleteDevice` | `(deviceId: string) => Promise<Result<DeviceResponse[], HttpError>>` |
+| `deleteDevice` | `(deviceId: string) => Promise<Result<DeviceResponse, HttpError>>` |
 
 Parameters:
 

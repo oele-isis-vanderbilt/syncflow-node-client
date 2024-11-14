@@ -1,4 +1,4 @@
-import { Err, type Result } from 'ts-monads/lib/Result';
+import { type Result } from 'ts-monads/lib/Result';
 import { BaseClient, ProjectTokenClaims } from './base-client';
 import { BaseClientOptions, HttpError } from './base-client';
 import type { ParticipantInfo } from 'livekit-server-sdk';
@@ -123,7 +123,7 @@ export class ProjectClient {
      */
     public async getSession(
         sessionId: string
-    ): Promise<Result<ProjectSessionResponse[], HttpError>> {
+    ): Promise<Result<ProjectSessionResponse, HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}`;
         return await this.client.authorizedFetch<ProjectSessionResponse>(
             url,
@@ -176,7 +176,7 @@ export class ProjectClient {
      */
     public async stopSession(
         sessionId: string
-    ): Promise<Result<ProjectSessionResponse[], HttpError>> {
+    ): Promise<Result<ProjectSessionResponse, HttpError>> {
         const url = `projects/${this.projectId}/sessions/${sessionId}/stop`;
         return await this.client.authorizedFetch<ProjectSessionResponse>(
             url,
@@ -202,7 +202,7 @@ export class ProjectClient {
      */
     public async getDevice(
         deviceId: string
-    ): Promise<Result<DeviceResponse[], HttpError>> {
+    ): Promise<Result<DeviceResponse, HttpError>> {
         const url = `projects/${this.projectId}/devices/${deviceId}`;
         return await this.client.authorizedFetch<DeviceResponse>(url, 'GET');
     }
@@ -231,7 +231,7 @@ export class ProjectClient {
      */
     public async deleteDevice(
         deviceId: string
-    ): Promise<Result<DeviceResponse[], HttpError>> {
+    ): Promise<Result<DeviceResponse, HttpError>> {
         const url = `projects/${this.projectId}/devices/${deviceId}`;
         return await this.client.authorizedFetch<DeviceResponse>(url, 'DELETE');
     }

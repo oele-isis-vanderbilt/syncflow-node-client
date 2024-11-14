@@ -11,7 +11,7 @@ export interface APIClaims {
     iat: number;
     exp: number;
     iss: string;
-    project: string;
+    projectId: string;
 }
 
 export class HttpError extends Error {
@@ -57,6 +57,7 @@ export class BaseClient {
         headers: { [key: string]: string } = {},
         body?: any
     ): Promise<Result<T, HttpError>> {
+        console.log(this.getToken())
         const requestHeaders = {
             ...headers,
             'Content-Type': 'application/json',
@@ -89,14 +90,14 @@ export class BaseClient {
 const encodeJWT = (
     apiKey: string,
     apiSecret: string,
-    project: string,
+    projectId: string,
     exp: number
 ): string => {
     let claims: APIClaims = {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + exp,
         iss: apiKey,
-        project: project
+        projectId: projectId,
     };
 
     return jwt.sign(claims, apiSecret, {
@@ -107,14 +108,19 @@ const encodeJWT = (
 export class ProjectTokenClaims implements Claims {
     private apiKey: string;
     private apiSecret: string;
-    private project: string;
+    private projectId: string;
     private exp: number;
     private token?: string;
 
-    constructor(apiKey: string, apiSecret: string, project: string, expiration: number = 3600) {
+    constructor(
+        apiKey: string,
+        apiSecret: string,
+        projectId: string,
+        expiration: number = 3600
+    ) {
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
-        this.project = project;
+        this.projectId = projectId;
         this.exp = expiration;
     }
 
@@ -129,7 +135,7 @@ export class ProjectTokenClaims implements Claims {
         this.token = encodeJWT(
             this.apiKey,
             this.apiSecret,
-            this.project,
+            this.projectId,
             this.exp
         );
     }
