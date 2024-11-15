@@ -57,7 +57,6 @@ export class BaseClient {
         headers: { [key: string]: string } = {},
         body?: any
     ): Promise<Result<T, HttpError>> {
-        console.log(this.getToken())
         const requestHeaders = {
             ...headers,
             'Content-Type': 'application/json',
