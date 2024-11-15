@@ -215,7 +215,7 @@ export class ProjectClient {
     public async registerDevice(
         deviceRegisterRequest: Partial<DeviceRegisterRequest>
     ): Promise<Result<DeviceResponse, HttpError>> {
-        const url = `projects/${this.projectId}/create-session`;
+        const url = `projects/${this.projectId}/register-device`;
         return await this.client.authorizedFetch(
             url,
             'POST',
