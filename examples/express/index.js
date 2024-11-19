@@ -43,22 +43,37 @@ function joinRoom() {
                     },
                 });
 
-                livekitRoom.prepareConnection(livekitServerUrl, token);
+                // livekitRoom.prepareConnection(livekitServerUrl, token);
 
-                livekitRoom
-                    .on(LivekitClient.RoomEvent.TrackSubscribed, handleTrackSubscribed)
-                    .on(LivekitClient.RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
-                    .on(LivekitClient.RoomEvent.Disconnected, handleDisconnect)
+                // livekitRoom
+                //     .on(LivekitClient.RoomEvent.TrackSubscribed, handleTrackSubscribed)
+                //     .on(LivekitClient.RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
+                //     .on(LivekitClient.RoomEvent.Disconnected, handleDisconnect)
 
                 // Add awaits in sequence
                 await livekitRoom.connect(livekitServerUrl, token);
-                await livekitRoom.localParticipant.enableCameraAndMicrophone();  // Also pass the room as parameter
+                await livekitRoom.localParticipant.enableCameraAndMicrophone();
+                displayLocalVideo(livekitRoom.localParticipant);
+                  // Also pass the room as parameter
             })
             .catch(error => console.error('Error', error))
     } catch (error) {
         console.error('Error joining room:', error);
         alert(error.message || 'Failed to join room');
     }
+}
+
+function displayLocalVideo(participant) {
+    participant.videoTracks.forEach(trackPublication => {
+        const track = trackPublication.track;
+        const video = track.attach();
+        video.setAttribute('data-identity', participant.identity);
+        video.setAttribute('data-participant-sid', participant.sid);
+        // set 300*300
+        video.setAttribute('width', '300');
+        video.setAttribute('height', '300');
+        document.querySelector('#video-container').appendChild(video);
+    });
 }
 
 async function enableLocalTracks(room) {
@@ -98,7 +113,30 @@ function handleDisconnect(participant) {
     }
 }
 
-function handleTrackSubscribed(track, publication, participant) {
+function handleTrackSubscribed(
+    track,
+    publication,
+    participant,
+) {
+    const videoContainer = document.getElementById('video-container');
+    console.log('Track subscribed:', track.kind, participant.identity);
+    if (track.kind === LivekitClient.Track.Kind.Video || track.kind === LivekitClient.Track.Kind.Audio) {
+        // attach track to a new HTMLVideoElement or HTMLAudioElement
+        // var localVideoElement = document.createElement('video');
+        // localVideoElement.autoplay = true;
+        // localVideoElement.controls = true;
+        // localVideoElement.muted = true;
+        const localVideoElement = track.attach();
+
+        videoContainer.appendChild(localVideoElement);
+
+        // attach track to an existing HTMLVideoElement or HTMLAudioElement
+        // track.attach(localVideoElement);
+        // parentElement.appendChild(element);
+    }
+}
+
+function handleTrackSubscribed2(track, publication, participant) {
     console.log('Track subscribed:', track.kind, participant.identity);
     const videoContainer = document.getElementById('video-container');
 
