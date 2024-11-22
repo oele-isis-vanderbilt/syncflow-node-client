@@ -90,7 +90,7 @@ app.post('/token', async (req, res) => {
             // Create new session if none exists
             const newSessionRequest = {
                 name: roomName,
-                autoRecording: true,
+                autoRecording: false,
                 maxParticipants: 200,
                 deviceGroups: []
             };
