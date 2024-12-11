@@ -14,7 +14,7 @@
 This is a reusable NodeJS client implementation for [`SyncFlow`](https://syncflow.live). The idea here is to create necessary functionality to interact with the [`SyncFlow`](https://syncflow.live) api, in a NodeJS application. Primary beneficiaries of this package could be clients to [`SyncFlow`](https://syncflow.live), who have their own backend in NodeJS and want to integrate with [`SyncFlow`](https://syncflow.live).
 
 ## Features
-- Manage rooms, participants and recordings in the room
+- Manage sessions, participants and recordings in a SyncFlow Project
 - Easy integration with existing Node.js applications
 
 ## Installation
@@ -25,31 +25,58 @@ $ npm install syncflow-node-client
 ```
 
 ## Usage
-In order to use the SyncFlow node client, you need the `SYNCFLOW_API_KEY`, `SYNCFLOW_API_SECRET` and `SYNCFLOW_SERVER_URL`. At this point, the server url is always going to be `https://api.syncflow.live`. To generate a key secret pair, login to `https://dashboard.syncflow.live`, navigate to settings page and use API keys generation page to generate the keys. Once, you have your api keys, either set the aforementioned values as environment variables, or use directly with the `SyncFlowClientBuilder`.
+In order to use the SyncFlow node client, you need the `SYNCFLOW_API_KEY`, `SYNCFLOW_API_SECRET` and `SYNCFLOW_SERVER_URL`, `SYNCFLOW_PROJECT_ID`. At this point, the server url is always going to be `https://api.syncflow.live`. To generate a key secret pair, login to `https://syncflow.live`, navigate to your project settings page and use API keys generation page to generate the keys. Once, you have your api keys, either set the aforementioned values as environment variables, or use directly with the `ProjectClientBuilder`.
 
 ```js
-const {SyncFlowClientBuilder} = require('syncflow-node-client');
+const {ProjectClientBuilder} = require('syncflow-node-client');
 
-// Create a new client or set the environment variables SYNCFLOW_API_KEY, SYNCFLOW_API_SECRET and SYNCFLOW_SERVER_URL
-const client = new SyncFlowClientBuilder()
-                    .setApiKey('YOUR_API_KEY')
-                    .setApiSecret('YOUR_API_SECRET')
-                    .setServerUrl('SYNCFLOW_SERVER_URL').build();
+// Create a new client
+const client = new ProjectClientBuilder()
+                    .setServerUrl(process.env.SYNCFLOW_SERVER_URL)
+                    .setApiKey(process.env.SYNCFLOW_API_KEY)
+                    .setApiSecret(process.env.SYNCFLOW_API_SECRET)
+                    .setProjectId(process.env.SYNCFLOW_PROJECT_ID).build();
 
-// Now you can use the client to interact with SyncFlow API
-// Generate User Token, results are returned as monads (Ok(RoomResult) or Err(HttpError))
-const userTokenResults = await client.generateLivekitToken('NAME', {
-    room: 'ROOM_ID',
-});
+// Now you can use the client to interact with SyncFlow Project
+// Create a session and session joinn token, results are returned as monads (Ok(data) or Err(HttpError))
+const newSessionRequest = {
+    name: "Session Name",
+    autoRecording: false,
+    maxParticipants: 200,
+    deviceGroups: []
+};
+const sessionResult = await client.createSession(newSessionRequest);
 
-// Create a room
-const room = await client.createRoom('ROOM_NAME', {
-    maxParticipants: 10,
-    emptyTimeout: 60,
-});
+const sessionId = sessionResult.unwrap().id; // Throws an error if the request failed
+
+const videoGrants = {
+    canPublish: true,
+    canPublishData: true,
+    canPublishSources: ['camera', 'screen'],
+    canSubscribe: true,
+    canUpdateOwnMetadata: true,
+    hidden: false,
+    ingressAdmin: true,
+    recorder: true,
+    room: roomName,
+    roomAdmin: true,
+    roomCreate: true,
+    roomJoin: true,
+    roomList: true,
+    roomRecord: true,
+};
+
+const tokenRequest = {
+    identity,
+    name: identity,
+    videoGrants
+};
+
+// Get the Join Token
+const sessionToken = await client.generateSessionToken(sessionId, tokenRequest)
 ```
 
-Explore the [API documentation]((./doc.md)) for more details on the available methods and their usage. Further usage examples can also be found in the test [file](./src/syncflow-client.test.ts).
+Explore the [API documentation]((./doc.md)) for more details on the available methods and their usage. For a full example, see the express JS [example](./examples/express/). Which creates a simple camera sharing application with SyncFlow and Livekit clients.
 
 ## API Reference
 See the [doc file](./doc.md).

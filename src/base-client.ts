@@ -1,45 +1,18 @@
 import * as jwt from 'jsonwebtoken';
 import { Err, Ok, Result } from 'ts-monads/lib/Result';
 
-export interface BaseClientOptions {
-    tokenTtl: number;
-    autoRenewToken: boolean;
-    project?: string;
+export interface Claims {
+    to_jwt(): string;
+    refresh(): void;
+    is_expired(): boolean;
 }
 
 export interface APIClaims {
     iat: number;
     exp: number;
     iss: string;
-
-    project?: string;
+    projectId: string;
 }
-
-const encodeJWT = (
-    apiKey: string,
-    apiSecret: string,
-    project: string | undefined,
-    exp: number
-): string => {
-    let claims: APIClaims = {
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + exp,
-        iss: apiKey,
-    };
-    if (project) {
-        claims.project = project;
-    }
-
-    return jwt.sign(claims, apiSecret, {
-        algorithm: 'HS256',
-    });
-};
-
-const decodeJWT = (token: string): APIClaims => {
-    const claims = jwt.decode(token) as APIClaims;
-
-    return claims;
-};
 
 export class HttpError extends Error {
     statusCode: number;
@@ -52,59 +25,30 @@ export class HttpError extends Error {
     }
 }
 
+export interface BaseClientOptions {
+    autoRenewToken: boolean;
+}
+
 export class BaseClient {
     baseUrl: string;
-    apiKey: string;
-    apiSecret: string;
-    tokenTtl: number;
+    claims: Claims;
     autoRenewToken: boolean;
-    project: string | undefined;
-    _token: undefined | string;
 
     constructor(
         baseUrl: string,
-        apiKey: string,
-        apiSecret: string,
-        tokenTtl: number = 60 * 60,
-        autoRenewToken: boolean = true,
-        project?: string
+        claims: Claims,
+        options: BaseClientOptions = { autoRenewToken: true }
     ) {
-        this.apiKey = apiKey;
         this.baseUrl = baseUrl;
-        this.apiSecret = apiSecret;
-        this.tokenTtl = tokenTtl;
-        this.autoRenewToken = autoRenewToken;
-        this.project = project;
-        this._token = undefined;
+        this.claims = claims;
+        this.autoRenewToken = options.autoRenewToken;
     }
 
-    get token(): string | undefined {
-        if (!this._token) {
-            this._token = this.generateToken();
+    private getToken(): string {
+        if (this.autoRenewToken && this.claims.is_expired()) {
+            this.claims.refresh();
         }
-
-        if (this.autoRenewToken && this.tokenCloseToExpiry()) {
-            this._token = this.generateToken();
-        }
-
-        return this._token;
-    }
-
-    private tokenCloseToExpiry(): boolean {
-        if (!this._token) {
-            return false;
-        }
-        const claims = decodeJWT(this._token);
-        return claims.exp < Math.floor(Date.now() / 1000) - 100;
-    }
-
-    private generateToken(): string {
-        return encodeJWT(
-            this.apiKey,
-            this.apiSecret,
-            this.project,
-            this.tokenTtl
-        );
+        return this.claims.to_jwt();
     }
 
     async authorizedFetch<T>(
@@ -116,7 +60,7 @@ export class BaseClient {
         const requestHeaders = {
             ...headers,
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.token}`,
+            Authorization: `Bearer ${this.getToken()}`,
         };
 
         const requestBody = body || {};
@@ -141,3 +85,71 @@ export class BaseClient {
         return new Err(new HttpError(statusCode, text));
     }
 }
+
+const encodeJWT = (
+    apiKey: string,
+    apiSecret: string,
+    projectId: string,
+    exp: number
+): string => {
+    let claims: APIClaims = {
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + exp,
+        iss: apiKey,
+        projectId: projectId,
+    };
+
+    return jwt.sign(claims, apiSecret, {
+        algorithm: 'HS256',
+    });
+};
+
+export class ProjectTokenClaims implements Claims {
+    private apiKey: string;
+    private apiSecret: string;
+    private projectId: string;
+    private exp: number;
+    private token?: string;
+
+    constructor(
+        apiKey: string,
+        apiSecret: string,
+        projectId: string,
+        expiration: number = 3600
+    ) {
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+        this.projectId = projectId;
+        this.exp = expiration;
+    }
+
+    to_jwt(): string {
+        if (!this.token || this.is_expired()) {
+            this.refresh();
+        }
+        return this.token!;
+    }
+
+    refresh(): void {
+        this.token = encodeJWT(
+            this.apiKey,
+            this.apiSecret,
+            this.projectId,
+            this.exp
+        );
+    }
+
+    is_expired(): boolean {
+        if (!this.token) {
+            return false;
+        }
+        const claims = decodeJWT(this.token);
+        return claims.exp < Math.floor(Date.now() / 1000) - 100;
+    }
+}
+
+const decodeJWT = (token: string): APIClaims => {
+    const claims = jwt.decode(token) as APIClaims;
+
+    return claims;
+};
