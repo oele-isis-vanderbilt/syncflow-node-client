@@ -1,8 +1,7 @@
-import { Room, VideoPresets } from "livekit-client";
+import { Room, VideoPresets } from 'livekit-client';
 
 export function joinRoom(element) {
-    element.addEventListener("click", () => {
-
+    element.addEventListener('click', () => {
         const identity = document.getElementById('identity').value;
         const roomName = document.getElementById('roomName').value;
 
@@ -20,15 +19,17 @@ export function joinRoom(element) {
                 },
                 body: JSON.stringify({
                     identity,
-                    roomName
-                })
+                    roomName,
+                }),
             })
-                .then(r => r.json())
-                .then(async (r) => {  // Make this callback async
+                .then((r) => r.json())
+                .then(async (r) => {
+                    // Make this callback async
                     const token = r.value.token;
                     const livekitServerUrl = r.value.livekitServerUrl;
 
-                    const livekitRoom = new Room({// automatically manage subscribed video quality
+                    const livekitRoom = new Room({
+                        // automatically manage subscribed video quality
                         adaptiveStream: true,
 
                         // optimize publishing bandwidth and CPU for published tracks
@@ -44,18 +45,27 @@ export function joinRoom(element) {
                     // Add awaits in sequence
                     await livekitRoom.connect(livekitServerUrl, token);
                     try {
-                        let trackPublication = await livekitRoom.localParticipant.setCameraEnabled(true);
+                        let trackPublication =
+                            await livekitRoom.localParticipant.setCameraEnabled(
+                                true
+                            );
                         // Wait for 2 seconds (The new SDK doesn't work without this delay and enable camera and microphone separately)
                         // This example only enables the camera
-                        await new Promise((resolve) => setTimeout(resolve, 2000));
-                        displayLocalVideo(livekitRoom.localParticipant, trackPublication);
-
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 2000)
+                        );
+                        displayLocalVideo(
+                            livekitRoom.localParticipant,
+                            trackPublication
+                        );
                     } catch (error) {
-                        console.error('Error enabling camera and microphone:', error);
+                        console.error(
+                            'Error enabling camera and microphone:',
+                            error
+                        );
                     }
-
                 })
-                .catch(error => console.error('Error', error))
+                .catch((error) => console.error('Error', error));
         } catch (error) {
             console.error('Error joining room:', error);
             alert(error.message || 'Failed to join room');

@@ -18,13 +18,13 @@ export interface VideoGrantsWrapper {
 export interface TokenRequest {
     identity: string;
     name?: string;
-    videoGrants: VideoGrantsWrapper
+    videoGrants: VideoGrantsWrapper;
 }
 
 export interface TokenResponse {
     token: string;
     identity: string;
-    livekitServerUrl?: string
+    livekitServerUrl?: string;
 }
 
 export interface NewSessionRequest {
@@ -78,13 +78,13 @@ export interface DeviceRegisterRequest {
 }
 
 export interface DeviceResponse {
-    id: string,
-    name: string,
-    group: string,
-    comments?: string,
-    registered_at: number,
-    registered_by: number,
-    project_id: String,
-    session_notification_exchange_name?: string,
-    session_notification_binding_key?: string,
+    id: string;
+    name: string;
+    group: string;
+    comments?: string;
+    registered_at: number;
+    registered_by: number;
+    project_id: String;
+    session_notification_exchange_name?: string;
+    session_notification_binding_key?: string;
 }

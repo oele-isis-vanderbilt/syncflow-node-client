@@ -1,7 +1,7 @@
-import { joinRoom } from "./room";
-import "./style.css";
+import { joinRoom } from './room';
+import './style.css';
 
-document.querySelector("#app").innerHTML = `
+document.querySelector('#app').innerHTML = `
   <!DOCTYPE html>
 <html lang="en">
 
@@ -42,4 +42,4 @@ document.querySelector("#app").innerHTML = `
 </html>
 `;
 
-joinRoom(document.querySelector("#join_room"));
+joinRoom(document.querySelector('#join_room'));
