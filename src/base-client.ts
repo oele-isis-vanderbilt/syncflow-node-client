@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { Err, Ok, Result } from 'ts-monads/lib/Result';
 
 export interface Claims {
