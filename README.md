@@ -38,7 +38,7 @@ const client = new ProjectClientBuilder()
                     .setProjectId(process.env.SYNCFLOW_PROJECT_ID).build();
 
 // Now you can use the client to interact with SyncFlow Project
-// Create a session token, results are returned as monads (Ok(SessionInfo) or Err(HttpError))
+// Create a session and session joinn token, results are returned as monads (Ok(data) or Err(HttpError))
 const newSessionRequest = {
     name: "Session Name",
     autoRecording: false,
