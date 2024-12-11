@@ -69,16 +69,13 @@ app.post('/token', async (req, res) => {
     };
 
     if (existingSession.value !== undefined) {
-      existingSession.mapAsync((session) => {
+      return existingSession.mapAsync(async (session) => {
         console.log("Existing session", session.id)
-        projectClient.generateSessionToken(
+        return (await projectClient.generateSessionToken(
           session.id,
           tokenRequest
-        ).then((token) => {
-          return jsonOkResponse(res, token);
-        }).catch((error) => {
-          return errorResponse(res, error);
-        })
+        )).map((token) => jsonOkResponse(res, token)).unwrapOrElse((error) => errorResponse(res, error));
+
       });
     } else {
       console.log("Creating new session")
@@ -108,13 +105,12 @@ app.post('/token', async (req, res) => {
   }
 });
 
-// Initialize SyncFlow client
-const projectClient = new ProjectClientBuilder(
-  process.env.SYNCFLOW_API_URL,
-  process.env.SYNCFLOW_API_KEY,
-  process.env.SYNCFLOW_API_SECRET,
-  process.env.SYNCFLOW_PROJECT_ID
-).build();
+const projectClient = new ProjectClientBuilder()
+  .setServerUrl(process.env.SYNCFLOW_SERVER_URL)
+  .setApiKey(process.env.SYNCFLOW_API_KEY)
+  .setApiSecret(process.env.SYNCFLOW_API_SECRET)
+  .setProjectId(process.env.SYNCFLOW_PROJECT_ID)
+  .build();
 
 ViteExpress.listen(app, 3000, () =>
   console.log("Server is listening on port 3000..."),

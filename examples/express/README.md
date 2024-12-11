@@ -16,7 +16,15 @@ Start the server by running the following command:
 $ npm start
 ```
 
-Currently, there are two routes available at `http://localhost:5444/`.
+Currently, there are two routes available at `http://localhost:3000/`.
 
-`GET` `/guest-token`: This route generates a livekit room join token with identity `guest`.
-`GET` `/list-rooms`: This route lists all the rooms available in the SyncFlow server.
+`POST` `/token`: This route generates a syncflow session token to join the session's livekit room. If the session name doesn't exist or is inactive, a new session will be created. The body expects the following json `{identity: string, roomName: string}`.
+> **Important:** You need to create an `.env` file with the following variables before you run this project:
+> ```
+> SYNCFLOW_SERVER_URL="YOUR_SERVER_URL"
+> SYNCFLOW_API_KEY="YOUR_API_KEY"
+> SYNCFLOW_API_SECRET="YOUR_API_SECRET"
+> SYNCFLOW_PROJECT_ID="YOUR_PROJECT_ID"
+> ```
+
+

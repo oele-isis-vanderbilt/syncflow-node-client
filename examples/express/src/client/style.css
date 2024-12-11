@@ -77,6 +77,7 @@ button.leave:hover {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 10px;
   margin-top: 20px;
+  margin-left: 20px;
 }
 
 .video-element {

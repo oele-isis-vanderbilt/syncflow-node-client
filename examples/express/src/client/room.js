@@ -13,7 +13,7 @@ export function joinRoom(element) {
 
         try {
             // Get token from server
-            fetch('http://localhost:3000/token', {
+            fetch('/token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,12 +38,22 @@ export function joinRoom(element) {
                         videoCaptureDefaults: {
                             resolution: VideoPresets.h720.resolution,
                         },
+                        stopLocalTrackOnUnpublish: true,
                     });
-
+                    livekitRoom.prepareConnection(livekitServerUrl, token);
                     // Add awaits in sequence
                     await livekitRoom.connect(livekitServerUrl, token);
-                    await livekitRoom.localParticipant.enableCameraAndMicrophone();
-                    displayLocalVideo(livekitRoom.localParticipant);
+                    try {
+                        let trackPublication = await livekitRoom.localParticipant.setCameraEnabled(true);
+                        // Wait for 2 seconds (The new SDK doesn't work without this delay and enable camera and microphone separately)
+                        // This example only enables the camera
+                        await new Promise((resolve) => setTimeout(resolve, 2000));
+                        displayLocalVideo(livekitRoom.localParticipant, trackPublication);
+
+                    } catch (error) {
+                        console.error('Error enabling camera and microphone:', error);
+                    }
+
                 })
                 .catch(error => console.error('Error', error))
         } catch (error) {
@@ -53,15 +63,14 @@ export function joinRoom(element) {
     });
 }
 
-function displayLocalVideo(participant) {
-    participant.videoTracks.forEach(trackPublication => {
-        const track = trackPublication.track;
-        const video = track.attach();
-        video.setAttribute('data-identity', participant.identity);
-        video.setAttribute('data-participant-sid', participant.sid);
-        // set 300*300
-        video.setAttribute('width', '300');
-        video.setAttribute('height', '300');
-        document.querySelector('#video-container').appendChild(video);
-    });
+function displayLocalVideo(participant, trackPublication) {
+    const track = trackPublication.track;
+    const video = track.attach();
+
+    video.setAttribute('data-identity', participant.identity);
+    video.setAttribute('data-participant-sid', participant.sid);
+    // set 300*300
+    video.setAttribute('width', '300');
+    video.setAttribute('height', '300');
+    document.querySelector('#video-container').appendChild(video);
 }
