@@ -41,11 +41,45 @@ export interface ProjectSessionResponse {
     name: string;
     startedAt: number;
     comments: string;
-    emptyTimeout: number;
+    empty_timeout: number;
     maxParticipants: number;
     livekitRoomName: string;
     projectId: string;
     status: string;
+    numParticipants: number;
+    numRecordings: number;
+    participants?: SessionParticipant[];
+    recordings?: SessionEgress[];
+}
+
+export interface SessionParticipant {
+    id: string;
+    identity: string;
+    name?: string;
+    joinedAt: number;
+    leftAt: number;
+    sessionId: string;
+    tracks: SessionTrack[];
+}
+
+export interface SessionTrack {
+    id: string;
+    sid: String;
+    name?: string;
+    kind: string;
+    source: string;
+    participantId: string;
+    multimediaDetails?: MultimediaDetails;
+}
+
+export interface MultimediaDetails {
+    destination: string;
+    fileName: string;
+    presignedUrl: string;
+    presignedUrlExpires: number;
+    publisher: string;
+    recordingStartTime: number;
+    trackId: string;
 }
 
 export interface GenericResponse {
@@ -87,4 +121,16 @@ export interface DeviceResponse {
     project_id: String;
     session_notification_exchange_name?: string;
     session_notification_binding_key?: string;
+}
+
+export interface SessionEgress {
+    id: string;
+    trackId: string;
+    egressId: string;
+    startedAt: number;
+    egressType: string;
+    status: string;
+    destination: string;
+    roomName: string;
+    sessionId: string;
 }
