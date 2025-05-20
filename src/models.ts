@@ -82,7 +82,6 @@ export interface MultimediaDetails {
     trackId: string;
 }
 
-
 export interface GenericResponse {
     message: string;
     status: number;
